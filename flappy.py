@@ -1,7 +1,11 @@
 import pygame, random
 from pygame.locals import *
 
-SCREEN_WIDTH = 400
+# FIXME: EnemyBird jest wyświetlony w złej wysokości
+# TODO: nie macha skrzydłami
+# TODO: powinien patrzeć w lewą stronę
+
+SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 SPEED = 10
 GRAVITY = 1
@@ -46,6 +50,23 @@ class Bird(pygame.sprite.Sprite):
     
     def bump(self):
         self.speed = -SPEED
+
+class EnemyBird(pygame.sprite.Sprite):
+    def __init__(self, xpos, ypos):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.images = [pygame.image.load('bluebird-upflap.png').convert_alpha(),
+                       pygame.image.load('bluebird-midflap.png').convert_alpha(),
+                       pygame.image.load('bluebird-downflap.png').convert_alpha()]
+        self.image = self.images[0]
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.rect = self.image.get_rect()
+        self.rect[0] = xpos
+        self.rect[1] = ypos
+
+    def update(self):
+       self.rect[0] -= GAME_SPEED
 
 class Pipe(pygame.sprite.Sprite):
 
@@ -93,7 +114,8 @@ def get_random_pipes(xpos):
     size = random.randint(100, 300)
     pipe = Pipe(False, xpos, size)
     pipe_inverted = Pipe(True, xpos, SCREEN_HEIGHT - size - PIPE_GAP)
-    return (pipe, pipe_inverted)
+    enemy_bird = EnemyBird(xpos, size + PIPE_GAP / 2)
+    return (pipe, pipe_inverted, enemy_bird)
 
 
 pygame.init()
@@ -116,6 +138,7 @@ for i in range(2):
     pipes = get_random_pipes(SCREEN_WIDTH * i + 800)
     pipe_group.add(pipes[0])
     pipe_group.add(pipes[1])
+    pipe_group.add(pipes[2])
 
 
 clock = pygame.time.Clock()
@@ -141,11 +164,13 @@ while True:
     if is_off_screen(pipe_group.sprites()[0]):
         pipe_group.remove(pipe_group.sprites()[0])
         pipe_group.remove(pipe_group.sprites()[0])
+        pipe_group.remove(pipe_group.sprites()[0])
 
         pipes = get_random_pipes(SCREEN_WIDTH * 2)
 
         pipe_group.add(pipes[0])
         pipe_group.add(pipes[1])
+        pipe_group.add(pipes[2])
 
     bird_group.update()
     ground_group.update()
