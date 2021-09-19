@@ -1,8 +1,6 @@
 import pygame, random
 from pygame.locals import *
 
-# FIXME: EnemyBird jest wyświetlony w złej wysokości
-
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 800
