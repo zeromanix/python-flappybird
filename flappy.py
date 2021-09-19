@@ -66,7 +66,6 @@ class EnemyBird(pygame.sprite.Sprite):
         self.rect[1] = SCREEN_HEIGHT - ypos
 
 
-
     def update(self):
        self.rect[0] -= GAME_SPEED
        self.current_image = (self.current_image + 1) % 3
