@@ -2,10 +2,9 @@ import pygame, random
 from pygame.locals import *
 
 # FIXME: EnemyBird jest wyświetlony w złej wysokości
-# TODO: nie macha skrzydłami
-# TODO: powinien patrzeć w lewą stronę
 
-SCREEN_WIDTH = 800
+
+SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 800
 SPEED = 10
 GRAVITY = 1
@@ -41,7 +40,7 @@ class Bird(pygame.sprite.Sprite):
 
     def update(self):
         self.current_image = (self.current_image + 1) % 3
-        self.image = self.images[ self.current_image ]
+        self.image = self.images[ self.current_image]
 
         self.speed += GRAVITY
 
@@ -60,13 +59,19 @@ class EnemyBird(pygame.sprite.Sprite):
                        pygame.image.load('bluebird-downflap.png').convert_alpha()]
         self.image = self.images[0]
         self.mask = pygame.mask.from_surface(self.image)
+        self.current_image = 0
 
         self.rect = self.image.get_rect()
         self.rect[0] = xpos
         self.rect[1] = ypos
 
+
+
     def update(self):
        self.rect[0] -= GAME_SPEED
+       self.current_image = (self.current_image + 1) % 3
+       self.image = self.images[self.current_image]
+       self.image = pygame.transform.flip(self.image, True, False)
 
 class Pipe(pygame.sprite.Sprite):
 
@@ -111,7 +116,7 @@ def is_off_screen(sprite):
     return sprite.rect[0] < -(sprite.rect[2])
 
 def get_random_pipes(xpos):
-    size = random.randint(100, 300)
+    size = random.randint(100, 700)
     pipe = Pipe(False, xpos, size)
     pipe_inverted = Pipe(True, xpos, SCREEN_HEIGHT - size - PIPE_GAP)
     enemy_bird = EnemyBird(xpos, size + PIPE_GAP / 2)
